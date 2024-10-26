@@ -1,0 +1,14 @@
+node_modules/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+.idea/
+.idea/*
+.DS_Store
+.vs/
+
+# Logs
+logs
+*.log
+npm-debug.log*
