@@ -58,12 +58,44 @@ test('Get users id', async() => {
     const apiRequest = await request.newContext()
     const response = await apiRequest.get(`${BASE_URL}/users`)
     // console.log("userId = " + response.json().id)
-    const headersArray = response.headersArray()
-    const contentType = headersArray
-        .find((header) => header.name === 'Content-Type')
-        .value
-    console.log("contentType = " + contentType)
-    // const createdUser = await response.body()
-    userId = await response.body()
-    console.log("id = " + userId[0])
+    // const currentFirstName = responseJson[0].firstName
+    const responseJson = await response.json()
+    userId = responseJson[0].id
+    console.log("id = " + userId)
+    await expect(response.status()).toBe(200)
+    await expect(currentFirstName).toEqual(userFirst.firstName)
+    })
+
+test('PATCH user', async()  => {
+    const apiRequest = await request.newContext()
+
+    const response = await apiRequest.patch(`${BASE_URL}/users/${userId}`,{
+        data: userSecond
+    })
+
+    const receivedText = await response.text()
+    console.log(receivedText)
+
+    await expect(response.status()).toBe(200)
+    await expect(await response.text()).toEqual("User was updated successfully.")
+})
+
+test('GET user by id', async() => {
+    const apiRequest = await request.newContext()
+    const response = await apiRequest.get(`${BASE_URL}/users/${userId}`)
+    const responseJson = await response.json()
+    const currentFirstName = responseJson[0].firstName
+    const currentUserId = responseJson[0].id
+
+    console.log("firstName = " + currentFirstName)
+    console.log("id = " + currentUserId)
+    await expect(response.status()).toBe(200)
+    await expect(currentFirstName).toEqual(userFirst.firstName)
+})
+
+test('Delete users', async() => {
+    const apiRequest = await request.newContext()
+    const response = await apiRequest.delete(`${BASE_URL}/users/${userId}`)
+    await expect(response.status()).toBe(200)
+    await expect(await response.text()).toEqual("User was deleted successfully.")
 })
