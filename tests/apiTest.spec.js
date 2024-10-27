@@ -1,18 +1,20 @@
-import {test, request, expect} from '@playwright/test'
+import {test, request, expect} from '@playwright/test';
+import * as testData from '../testData/apiTestData/apiTestData.js';
+import * as utils from '../utils/apiUtils/apiTestUtils';
 
-const BASE_URL = 'http://localhost:5000/api'
+const BASE_URL = 'http://localhost:5000/api';
 
-const userFirst = {
-    "firstName": "Joe",
-    "lastName": "Buffalo",
-    "age": 43,
-}
-const userSecond = {
-    "firstName": "Sergey",
-    "lastName": "Ivanov",
-    "age": 25
-}
+let apiRequest;
 
+test.beforeEach(async() => {
+    apiRequest = await request.newContext();
+})
+
+test.afterEach(async() => {
+    await apiRequest.dispose();
+})
+
+//example rare GET test scenario
 test('GET /', async() => {
     const expectedResponseText = "Node Express API Server App";
     const apiRequest = await request.newContext();
@@ -27,9 +29,9 @@ test('GET /', async() => {
 
     console.log(response)
     console.log("------------------------")
-    console.log(await response.text())
-    console.log(statusCode)
-    console.log(headersArray)
+    console.log("Response text:",await response.text())
+    console.log("Response status:", statusCode)
+    console.log("Response headers:", headersArray)
     console.log("contentType = " + contentType)
 
     //Assert response
@@ -38,6 +40,25 @@ test('GET /', async() => {
     await expect(response).toBeOK();
 })
 
+// test GET scenario with utils
+test('GET / with utils', async () => {
+    const response = await apiRequest.get(`${testData.BASE_URL}/`); // act
+
+    const statusCode = utils.getResponseStatus(response);
+
+    await expect(statusCode).toBe(testData.expectedStatusCodes._200);
+
+    const contentTypeHeaderValue = utils.getContentTypeHeaderValue(response);
+    const contentLengthHeaderValue = utils.getContentLengthHeaderValue(response);
+    const responseText = await utils.getResponseText(response);
+
+    await expect(response).toBeOK();
+    await expect(responseText).toEqual(testData.expectedTexts.successfulGetApiHome);
+    await expect(contentTypeHeaderValue).toBe(testData.expectedHeaders.contentTypeValue.textHtml);
+    await expect(contentLengthHeaderValue).toEqual(testData.expectedHeaders.contentLengthValue.successfulGetApiHomeLength);
+})
+
+//example rare 'GET empty DB message' test scenario
 test('GET /users/ empty DB message', async() => {
     const expectedResponseText = "There are no users.";
     const expectedContentTypeValue = "text/html; charset=utf-8";
@@ -76,7 +97,7 @@ test('GET /users/ empty DB message', async() => {
 test('Create users', async () => {
     const apiRequest = await request.newContext();
     const response = await apiRequest.post(`${BASE_URL}/users`,{
-        data: userFirst
+        data: testData.userFirst
     })
     await expect(response.status()).toBe(200);
     await expect(await response.text()).toEqual("User created successfully.");
@@ -92,7 +113,7 @@ test("Get /users/ user's data", async() => {
     // to create a user
     await expect(
         await apiRequest.post(`${BASE_URL}/users`,{
-            data: userFirst
+            data: testData.userFirst
         })
     ).toBeOK();
 
@@ -121,7 +142,7 @@ test('PATCH /users/:id updates user by ID', async()  => {
     // to create a user
     await expect(
         await apiRequest.post(`${BASE_URL}/users`,{
-            data: userFirst
+            data: testData.userFirst
         })
     ).toBeOK();
 
@@ -130,7 +151,7 @@ test('PATCH /users/:id updates user by ID', async()  => {
     const userId = responseJson[0]?.id;
 
     const patchResponse = await apiRequest.patch(`${BASE_URL}/users/${userId}`,{
-        data: userSecond
+        data: testData.userSecond
     })
 
     await expect(patchResponse.status()).toBe(200);
@@ -147,13 +168,13 @@ test('GET /users/:id - retrieves user data by ID', async() => {
     // to create first user
     await expect(
         await apiRequest.post(`${BASE_URL}/users`,{
-            data: userFirst
+            data: testData.userFirst
         })
     ).toBeOK();
     // Create the second user
     await expect(
         await apiRequest.post(`${BASE_URL}/users`, {
-            data: userSecond
+            data: testData.userSecond
         })
     ).toBeOK();
 
@@ -173,9 +194,9 @@ test('GET /users/:id - retrieves user data by ID', async() => {
     const currentUserId = currentUserResponseJson.id;
 
     await expect(response.status()).toBe(200);
-    await expect(currentFirstName).toEqual(userFirst.firstName);
-    await expect(currentLastName).toEqual(userFirst.lastName);
-    await expect(currentAge).toEqual(userFirst.age);
+    await expect(currentFirstName).toEqual(testData.userFirst.firstName);
+    await expect(currentLastName).toEqual(testData.userFirst.lastName);
+    await expect(currentAge).toEqual(testData.userFirst.age);
     await expect(currentUserId).toEqual(userId);
 })
 
@@ -190,7 +211,7 @@ test('Delete /users/:id - deletes user by ID', async() => {
     // to create first user
     await expect(
         await apiRequest.post(`${BASE_URL}/users`,{
-            data: userFirst
+            data: testData.userFirst
         })
     ).toBeOK();
 

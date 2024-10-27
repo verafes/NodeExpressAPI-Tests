@@ -1,5 +1,5 @@
 import {request} from "@playwright/test";
-import * as TEST_DATA from "../testData/testData";
+import * as TEST_DATA from "../../testData/apiTestData/apiTestData";
 export async function createNewContext() {
     return await request.newContext()
 }
@@ -30,12 +30,18 @@ export function getContentTypeHeaderValue(response) {
         .value;
 }
 
-export async function getResponseBodyText(response) {
+export async function getResponseText(response) {
     return await response.text();
 }
 
-export async function getResponseBodyJson(response) {
+export async function getResponseBody(response) {
     return await response.json();
+}
+
+export function getContentLengthHeaderValue(response) {
+    return headersArray(response)
+        .find((header) => header.name === 'Content-Length')
+        .value;
 }
 
 export function getLengthUserId(userId) {
