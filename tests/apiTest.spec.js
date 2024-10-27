@@ -1,6 +1,7 @@
 import {test, request, expect} from '@playwright/test';
 import * as testData from '../testData/apiTestData/apiTestData.js';
 import * as utils from '../utils/apiUtils/apiTestUtils';
+import * as preconditions from '../utils/preconditions.js';
 
 const BASE_URL = 'http://localhost:5000/api';
 
@@ -14,7 +15,7 @@ test.afterEach(async() => {
     await apiRequest.dispose();
 })
 
-//example rare GET test scenario
+// rare GET test scenario
 test('GET /', async() => {
     const expectedResponseText = "Node Express API Server App";
     const apiRequest = await request.newContext();
@@ -58,7 +59,7 @@ test('GET / with utils', async () => {
     await expect(contentLengthHeaderValue).toEqual(testData.expectedHeaders.contentLengthValue.successfulGetApiHomeLength);
 })
 
-//example rare 'GET empty DB message' test scenario
+// rare 'GET empty DB message' test scenario
 test('GET /users/ empty DB message', async() => {
     const expectedResponseText = "There are no users.";
     const expectedContentTypeValue = "text/html; charset=utf-8";
@@ -94,6 +95,28 @@ test('GET /users/ empty DB message', async() => {
     await expect(await response.text()).toEqual(expectedResponseText);
 })
 
+// 'GET empty DB message' test scenario with utils
+test('GET /users/ empty DB message with utils', async () => {
+
+    // precondition
+    await preconditions.setPrecondition_DeleteUsers(apiRequest);
+
+    const response = await apiRequest.get(`${testData.USERS_ENDPOINT}/`);
+
+    const statusCode = utils.getResponseStatus(response);
+
+    await expect(statusCode).toBe(testData.expectedStatusCodes._200);
+
+    //headers
+    const contentTypeHeaderValue = utils.getContentTypeHeaderValue(response);
+    const contentLengthHeaderValue = utils.getContentLengthHeaderValue(response);
+    const responseText = await utils.getResponseText(response);
+
+    await expect(contentTypeHeaderValue).toBe(testData.expectedHeaders.contentTypeValue.textHtml);
+    await expect(contentLengthHeaderValue).toBe(testData.expectedHeaders.contentLengthValue.successfulGetApiUsersHomeEmptyDb);
+    await expect(responseText).toBe(testData.expectedTexts.successfulGetUsersHomeEmptyDb);
+})
+
 test('Create users', async () => {
     const apiRequest = await request.newContext();
     const response = await apiRequest.post(`${BASE_URL}/users`,{
@@ -103,7 +126,8 @@ test('Create users', async () => {
     await expect(await response.text()).toEqual("User created successfully.");
 })
 
-test("Get /users/ user's data", async() => {
+// rare GET users' data test scenario
+test("Get /users/ response users' data", async() => {
     const apiRequest = await request.newContext();
 
     // preconditions: to empty db
@@ -123,12 +147,37 @@ test("Get /users/ user's data", async() => {
 
     const currentFirstName = responseJson[0].firstName;
     const currentLastName = responseJson[0].lastName;
-    const currentAge = responseJson[0].age;;
+    const currentAge = responseJson[0].age;
 
     await expect(response.status()).toBe(200);
-    await expect(currentFirstName).toEqual(userFirst.firstName);
-    await expect(currentLastName).toEqual(userFirst.lastName);
-    await expect(currentAge).toEqual(userFirst.age);
+    await expect(currentFirstName).toEqual(testData.userFirst.firstName);
+    await expect(currentLastName).toEqual(testData.userFirst.lastName);
+    await expect(currentAge).toEqual(testData.userFirst.age);
+})
+
+// rare GET users' data test scenario with utils
+test ('GET /users/ response testData', async () => {
+
+    // precondition
+    await preconditions.setPrecondition_DeleteUsers_CreateUser(apiRequest);
+
+    const response = await apiRequest.get(`${testData.USERS_ENDPOINT}/`);
+    const statusCode = response.status();
+
+    await expect(statusCode).toBe(testData.expectedStatusCodes._200);
+
+    const contentTypeHeaderValue = utils.getContentTypeHeaderValue(response);
+    const responseBody = await utils.getResponseBody(response);
+    const isArray = await Array.isArray(responseBody);
+
+    await expect(contentTypeHeaderValue).toBe(testData.expectedHeaders.contentTypeValue.applicationJson);
+    await expect(isArray).toBeTruthy();
+    await expect(isArray).toBe(true);
+    await expect(responseBody).toHaveLength(testData.expectedResponseObjectsCount._1);
+    await expect(responseBody[0].firstName).toBe(testData.userFirst.firstName);
+    await expect(responseBody[0].lastName).toBe(testData.userFirst.lastName);
+    await expect(responseBody[0].age).toBe(testData.userFirst.age);
+    await expect(responseBody[0].id.length).toBe(testData.expected.idLength);
 })
 
 test('PATCH /users/:id updates user by ID', async()  => {
