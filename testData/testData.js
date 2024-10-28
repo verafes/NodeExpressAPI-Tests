@@ -12,6 +12,9 @@ export const expectedFormTexts = {
     firstNameLabel: 'First Name',
     lastNameLabel: 'Last Name',
     age: 'Age',
+    firstNameID: 'firstName',
+    lastNameID: 'lastName',
+    ageID: 'age',
     firstNameInputPlaceholder: 'Enter first name ...',
     lastNameInputPlaceholder: 'Enter first name ...',
     geInputPlaceholder: 'Enter first name ...',
@@ -20,4 +23,22 @@ export const expectedFormTexts = {
 
 export const expectedTablesHeadList = [
     '#', 'First', 'Last', 'Age', 'ID'
+]
+
+export const usersData = [
+    {
+        firstName: "Joe",
+        lastName: "Buffalo",
+        age: 43,
+    },
+    {
+        firstName: "Sergey",
+        lastName: "Ivanov",
+        age: 25,
+    },
+    {
+        firstName: "Michael",
+        lastName: "Smith",
+        age: 37,
+    },
 ]
