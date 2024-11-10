@@ -14,6 +14,7 @@
     "@types/node": "^22.5.5"
   },
   "dependencies": {
+    "dotenv": "^16.4.5",
     "playwright": "^1.47.2"
   }
 }

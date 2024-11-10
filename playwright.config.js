@@ -6,6 +6,7 @@ const { defineConfig, devices } = require('@playwright/test');
  * https://github.com/motdotla/dotenv
  */
 // require('dotenv').config({ path: path.resolve(__dirname, '.env') });
+require('dotenv').config();
 
 /**
  * @see https://playwright.dev/docs/test-configuration
