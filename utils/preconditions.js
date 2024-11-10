@@ -5,7 +5,7 @@ export async function setPrecondition_DeleteUsers_CreateUser(request) {
 
     await request.post(
         `${testData.USERS_ENDPOINT}/`,
-        {data: testData.user,
+        {data: testData.userFirst,
         })
 }
 
