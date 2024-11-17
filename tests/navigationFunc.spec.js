@@ -8,7 +8,7 @@ testData.navigationData.forEach(({
     }) => {
     test.describe('Navigation Tabs Functionality', async () => {
         test.beforeEach('Navigate to home page url', async({ page }) => {
-            await page.goto(`${testData.BASE_URL}/`);
+            await page.goto(`${testData.HOME_BASE_URL}/`);
         })
         /* # Test Case func 1: Verify Tab Navigation Functionality
         Objective: Ensure each tab navigates to the correct content/page.

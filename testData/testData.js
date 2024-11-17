@@ -1,4 +1,6 @@
-export const BASE_URL = 'http://localhost:5000';
+const PORT = process.env.PORT;
+const BASE_URL = `http://localhost:${PORT}`;
+export const HOME_BASE_URL = `${BASE_URL}/`;
 
 export const expectedHeaders = {
     title: 'Users App',
