@@ -5,16 +5,16 @@ import { usersData } from '../testData/testData.js';
 
 test('Title and URL as expected - Smoke test', async ({ page }) => {
     // Navigate to the base URL
-    await page.goto(`${testData.HOME_BASE_URL}/`);
+    await page.goto(`${testData.HOME_PAGE_URL}/`);
 
     // Verify URL and title
-    await expect(page).toHaveURL(`${testData.HOME_BASE_URL}/`);
+    await expect(page).toHaveURL(`${testData.HOME_PAGE_URL}/`);
     await expect(page).toHaveTitle(testData.expectedHeaders.title);
 });
 
 test('H1 heading display and text validation - UI test', async ({ page }) => {
     // Navigate to the base URL
-    await page.goto(`${testData.HOME_BASE_URL}/`);
+    await page.goto(`${testData.HOME_PAGE_URL}/`);
 
     // Locate H1 header and check visibility
     const headerLocator = page.getByRole('heading', { name: testData.expectedHeaders.h1 });
@@ -29,7 +29,7 @@ test('H1 heading display and text validation - UI test', async ({ page }) => {
 });
 
 test('H2 headings display and text validation - UI test', async ({ page }) => {
-    await page.goto(`${testData.HOME_BASE_URL}/`);
+    await page.goto(`${testData.HOME_PAGE_URL}/`);
 
     // Check H2 elements
     const allH2 = await page.locator('h2');
@@ -47,7 +47,7 @@ test('H2 headings display and text validation - UI test', async ({ page }) => {
 // Variation 1: Functional test with inline test data
 test('User form submission - Functional test', async ({ page }) => {
     // Navigate to the base URL
-    await page.goto(`${testData.HOME_BASE_URL}/`);
+    await page.goto(`${testData.HOME_PAGE_URL}/`);
 
     // Fill the user form with inline data
     const firstNamePlaceholder = page.getByPlaceholder('Enter first name ...', { exact: true });
@@ -72,7 +72,7 @@ test('User form submission - Functional test', async ({ page }) => {
 // Variation 2: Functional test using external test data
 test('User form submission - Functional test - using external test data', async ({ page }) => {
     // Navigate to the base URL
-    await page.goto(`${testData.HOME_BASE_URL}/`);
+    await page.goto(`${testData.HOME_PAGE_URL}/`);
 
     // Fill the user form with data from usersData
     const firstNamePlaceholder = page.getByPlaceholder( `${testData.expectedFormTexts.firstNameInputPlaceholder}`, { exact: true });
