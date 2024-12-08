@@ -8,7 +8,7 @@ testData.navigationData.forEach(({
     }) => {
     test.describe('Navigation Tabs Functionality', async () => {
         test.beforeEach('Navigate to home page url', async({ page }) => {
-            await page.goto(`${testData.HOME_PAGE_URL}/`);
+            await page.goto(`${testData.HOME_PAGE_URL}`);
         })
         /* # Test Case func 1: Verify Tab Navigation Functionality
         Objective: Ensure each tab navigates to the correct content/page.
@@ -42,7 +42,7 @@ testData.navigationData.forEach(({
         - Expected Result: The clicked tab should have a distinct highlight. */
 
         test(`TC-NavTabFunc-2: Verify Active '${tabName}' Tab Highlight.`, async({ page }) => {
-            test.setTimeout(20000);
+            test.slow();
             const tab = await page.getByRole('link', { name: `${tabName}`, exact:  true });
             await tab.click();
 
@@ -57,7 +57,7 @@ testData.navigationData.forEach(({
         - Expected Result: URL and psge title should change based on the active tab. */
 
         test(`TC-NavTabFunc-3: Verify '${expectedURL}' URL AND '${expectedTitle}' Change on '${tabName}' Tab Click.`, async({ page }) => {
-            test.setTimeout(20000);
+            test.slow();
             const tab = await page.getByRole('link', { name: `${tabName}`, exact:  true });
             await tab.click();
             const url = page.url();

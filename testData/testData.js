@@ -1,6 +1,8 @@
-const PORT = process.env.PORT;
-const BASE_URL = `http://localhost:${PORT}`;
-export const HOME_PAGE_URL = `${BASE_URL}/`;
+const PORT = process.env.PORT
+const BASE_URL = `http://localhost:${PORT}`
+export const HOME_PAGE_URL = `${BASE_URL}/`
+export const BASE_API_URL=`${BASE_URL}/api`
+export const USERS_END_POINT = `${BASE_API_URL}/users`;
 
 export const expectedHeaders = {
     title: 'Users App',
@@ -20,7 +22,7 @@ export const expectedFormTexts = {
     ageID: 'age',
     firstNameInputPlaceholder: 'Enter first name ...',
     lastNameInputPlaceholder: 'Enter first name ...',
-    geInputPlaceholder: 'Enter first name ...',
+    ageInputPlaceholder: 'Enter age ...',
     addButton: 'Add',
 }
 
@@ -54,7 +56,7 @@ export const navigationData = [
         expectedCount: 3,
         expectedLabels: ['First Name', 'Last Name', 'Age'],
         expectedURL: `${process.env.BASE_URL}` + '/add',
-        expectedTitle: 'Users App',
+        expectedTitle: 'Users app',
         expectedActiveClass: 'nav-link active',
         expectedAriaCurrent: 'page',
     },
@@ -65,7 +67,7 @@ export const navigationData = [
         expectedCount: 4,
         expectedLabels: ['User ID', 'First Name', 'Last Name', 'Age'],
         expectedURL: `${process.env.BASE_URL}` + '/search',
-        expectedTitle: 'Search',
+        expectedTitle: 'Search user',
         expectedActiveClass: 'nav-link active',
         expectedAriaCurrent: 'page',
     },
@@ -76,7 +78,7 @@ export const navigationData = [
         expectedCount: 4,
         expectedLabels: ['User ID', 'First Name', 'Last Name', 'Age'],
         expectedURL: `${process.env.BASE_URL}` + '/edit',
-        expectedTitle: 'Edit Users',
+        expectedTitle: 'Edit user',
         expectedActiveClass: 'nav-link active',
         expectedAriaCurrent: 'page',
     },
@@ -87,7 +89,7 @@ export const navigationData = [
         expectedCount: 4,
         expectedLabels: ['User ID', 'First Name', 'Last Name', 'Age'],
         expectedURL: `${process.env.BASE_URL}` + '/delete',
-        expectedTitle: 'Delete Users',
+        expectedTitle: 'Delete user',
         expectedActiveClass: 'nav-link active',
         expectedAriaCurrent: 'page',
     },

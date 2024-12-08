@@ -1,18 +1,22 @@
 import {request} from "@playwright/test";
-import * as TEST_DATA from "../../testData/apiTestData/apiTestData";
+import * as TEST_DATA from "../../testData/TestData";
 export async function createNewContext() {
     return await request.newContext()
 }
 
 export async function createUser(request, user) {
-    const created = await request.post(TEST_DATA.BASE_URL + TEST_DATA.USERS_END_POINT,{
+    const created = await request.post(TEST_DATA.BASE_API_URL + TEST_DATA.USERS_END_POINT,{
         data: user
     })
     return await created.json().then((entries) => entries[0].UserID)
 }
 
 export async function deleteUser(request, userId) {
-    await request.delete(TEST_DATA.BASE_URL + TEST_DATA.USERS_END_POINT + userId)
+    await request.delete(TEST_DATA.BASE_API_URL + TEST_DATA.USERS_END_POINT + userId)
+}
+
+export async function deleteAllUsers(request) {
+    await request.delete(TEST_DATA.BASE_API_URL + TEST_DATA.USERS_END_POINT)
 }
 
 export function getResponseStatus(response) {

@@ -3,7 +3,7 @@ import * as testData from "../testData/testData";
 
 test.describe('Navigation tabs are available', async() => {
     test.beforeEach('navigate to home page url', async ({page}) => {
-        await page.goto(`${testData.HOME_PAGE_URL}/`);
+        await page.goto(`${testData.HOME_PAGE_URL}`);
     });
 
     /* # Test Case 1: Verify Tabs Load Correctly
