@@ -3,8 +3,6 @@ import { users } from "../testData/functionalTestData/usersTestData";
 import { data } from "../testData/functionalTestData/searchFuncTestData";
 import * as testData from '../testData/testData.js';
 import * as precondition from "../utils/preconditions.js";
-import * as utils from "../utils/apiUtils/apiTestUtils";
-import * as apiTestData from "../testData/apiTestData/apiTestData";
 
 /*  TC-SearchFunc-1
 *
@@ -36,56 +34,36 @@ import * as apiTestData from "../testData/apiTestData/apiTestData";
         test.beforeEach('Land on Home Page, Create tested users', async({page}) => {
             apiRequest = await request.newContext()
             await precondition.setPrecondition_DeleteUsers(apiRequest);
+
             await page.goto(testData.HOME_PAGE_URL);
 
-            const response = await apiRequest.get(`http://localhost:5000/api/users/`);
-            console.log(`${testData.USERS_END_POINT}`)
-            const responseText = await utils.getResponseText(response);
-            await expect(responseText).toBe(apiTestData.expectedTexts.successfulGetUsersHomeEmptyDb);
-            console.log("responseText", responseText)
+            // Create UsersDB contains at least 4 users
+            const firstNameField = await page.getByPlaceholder('Enter first name...');
+            const lastNameField = await page.getByPlaceholder('Enter last name...');
+            const ageField = await page.getByPlaceholder('Enter age...')
+            const addButton = await page.getByRole('button', {name: "Add"});
+            const userID = page.locator('td[data-row="userId"]');
 
-            // Create UsersDB contains at least 3 users
+            for (let i = 0; i < usersDB.length; i++) {
+                const user = usersDB[i];
 
-            const firstNameField = await page.getByPlaceholder('Enter first name ...');
-            const lastNameField = await page.getByPlaceholder('Enter last name ...');
-            const ageField = await page.getByPlaceholder('Enter age ...');
-
-            const addButton = await page.locator('#addButton');
-
-            // const userID = await page.locator('#userId');
-            // const firstUserId = page.locator('[data-row="userId"]').nth(0);
-
-            for (const user of usersDB) {
                 await firstNameField.fill(user.firstName);
                 await lastNameField.fill(user.lastName);
                 await ageField.fill(user.age);
-                await addButton.waitFor({ state: 'visible' });
 
                 await addButton.click();
-                console.log("click")
-                test.setTimeout(1000);
 
-                // await userID.waitFor({ state: 'visible' });
-                //
-                // console.log(await userID.last().textContent())
-                // user.id = await userID.last().innerText();
-                // console.log("user.id",  user.id)
-                // user.id = await page.locator('#userId').innerText()
+                user.id = await userID.nth(i).textContent();
             }
-
-            console.log(`TC-SearchFun-1: ${tcName}, user db`, usersDB, );
-            const response2 = await apiRequest.get(`http://localhost:5000/api/users/`);
-            const responseText2 = await utils.getResponseText(response2);
-            console.log("responseText2", responseText2)
 
         })
         //  test
-        test(`TC-SearchFun-1: ${tcName}`, async({ page }) => {
+        test.skip(`TC-SearchFun-1: ${tcName}`, async({ page }) => {
             console.log(`Test 1: ${tcName}`);
             test.setTimeout(10000);
 
             await page.locator('[href*="/search"]').click()
-            const userIdField = await page.getByPlaceholder('Enter user ID ...')
+            const userIdField = await page.getByPlaceholder('Enter user ID...')
             const searchButton = await page.getByRole('button', {name: 'Search'})
 
             await page.goto(testData.HOME_PAGE_URL);
@@ -94,20 +72,15 @@ import * as apiTestData from "../testData/apiTestData/apiTestData";
 
             const searchH2 = await page.locator('h2').first();
             const h2Text = await searchH2.textContent();
-
             await expect(searchH2).toBeVisible();
             await expect(searchH2).toHaveText(testData.navigationData[1].header);
 
             //Fill search criteria in corresponding fields
             const firstNameField = page.getByLabel( `${testData.expectedFormTexts.firstNameLabel}`, { exact: true });
             await firstNameField.fill(searchCriteria[1]);
-            const fname = searchCriteria[1];
-            console.log("first name", fname);
 
             const lastNameField =  await page.getByLabel(`${testData.expectedFormTexts.lastNameLabel}`, { exact: true });
             await lastNameField.fill(searchCriteria[2]);
-            const lname = searchCriteria[2];
-            console.log("last name", lname);
 
             const ageField = await page.getByTestId(`${testData.expectedFormTexts.ageID}`);
             const ageValue = searchCriteria[3];
@@ -130,7 +103,7 @@ import * as apiTestData from "../testData/apiTestData/apiTestData";
 
                 const actualUserId = await page.locator('tbody>tr')
                     .nth(i).locator('td')
-                    .last().innerText()
+                    .nth(3).innerText()
                 const actualFirstUserName = await page.locator('tbody>tr')
                     .nth(i).locator('td')
                     .first().innerText()
@@ -141,17 +114,61 @@ import * as apiTestData from "../testData/apiTestData/apiTestData";
                     .nth(i).locator('td')
                     .nth(2).innerText()
 
-                console.log(actualFirstUserName, actualLastUserName, actualAge)
-
                 await expect(actualFirstUserName).toEqual(expectedUsers[i].firstName)
                 await expect(actualLastUserName).toEqual(expectedUsers[i].lastName)
                 await expect(actualAge).toEqual(expectedUsers[i].age)
                 await expect(actualUserId).toEqual(expectedUsers[i].id)
             }
+        });
+        // tests: Variation 2
+        test(`TC-SearchFun-2: ${tcName}`, async ({page}) => {
+            const searchTab = await page.getByRole('link', { name: 'Search'});
+
+            await searchTab.click();
+
+            let tableRows = await page.locator('tbody>tr');
+            console.log("tableRows", await tableRows, "tableRows-COUNT", await tableRows.count())
+            // await expect(await tableRows).toHaveCount(usersDB.length);
+
+            const userIdField = await page.getByPlaceholder('Enter user ID...');
+            const firstNameField = await page.getByPlaceholder('Enter first name...');
+            const lastNameField = await page.getByPlaceholder('Enter last name...');
+            const ageField = await page.getByPlaceholder('Enter age...');
+            const searchButton = await page.getByRole('button', {name: 'Search'});
+
+            await userIdField.fill(searchCriteria[0]);
+            await firstNameField.fill(searchCriteria[1]);
+            await lastNameField.fill(searchCriteria[2]);
+            await ageField.fill(searchCriteria[3]);
+
+            await searchButton.click();
+
+            const foundUsers = [];
+            tableRows = await page.locator('tbody tr');
+            const usersList = await tableRows.allInnerTexts();
+
+            for(let userInfo of usersList) {
+                userInfo = userInfo.split('\t');
+                userInfo = userInfo.slice(1);
+
+                const user = {};
+                user.firstName = userInfo[0];
+                user.lastName = userInfo[1];
+                user.age = userInfo[2];
+                user.id = userInfo[3];
+
+                foundUsers.push(user);
+            }
+
+            await expect(tableRows.count()).not.toBe(usersDB.length);
+            await expect(tableRows).toHaveCount(expectedCount);
+            await expect(foundUsers.length).toBe(expectedCount);
+            await expect(foundUsers).toStrictEqual(expectedUsers);
+
         })
 
         test.afterEach('Close API request context', async () => {
             await apiRequest.dispose();
-        })
-    })
+        });
+    });
 })

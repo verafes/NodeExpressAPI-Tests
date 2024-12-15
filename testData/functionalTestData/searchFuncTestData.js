@@ -38,3 +38,11 @@ export const data = {
         expectedUsers: [users.user1, users.user4],
     },
 }
+//
+// "Unique First Name" - 1,  firstName === search criteria
+// "Unique Last Name" - 1,  lastName === search criteria
+// "Unique Age" - 1,  age === search criteria
+//
+// "Non-Unique First Name" - 2,  firstName === search criteria
+// "Non-Unique Last Name" - 3,  lastName === search criteria
+// "Non-Unique Age" - 2,  age === search criteria

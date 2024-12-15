@@ -20,9 +20,9 @@ export const expectedFormTexts = {
     firstNameID: 'firstName',
     lastNameID: 'lastName',
     ageID: 'age',
-    firstNameInputPlaceholder: 'Enter first name ...',
-    lastNameInputPlaceholder: 'Enter first name ...',
-    ageInputPlaceholder: 'Enter age ...',
+    firstNameInputPlaceholder: 'Enter first name...',
+    lastNameInputPlaceholder: 'Enter first name...',
+    ageInputPlaceholder: 'Enter age...',
     addButton: 'Add',
 }
 
