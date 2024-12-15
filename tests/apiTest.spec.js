@@ -1,9 +1,10 @@
 import {test, request, expect} from '@playwright/test';
-import * as testData from '../testData/apiTestData/apiTestData.js';
+import * as apiTestData from '../testData/apiTestData/apiTestData.js';
+import * as testData from '../testData/TestData.js';
 import * as utils from '../utils/apiUtils/apiTestUtils';
 import * as preconditions from '../utils/preconditions.js';
 
-const BASE_API_URL = process.env.BASE_API_URL;
+const BASE_API_URL = testData.BASE_API_URL;
 
 let apiRequest;
 
@@ -19,7 +20,7 @@ test.afterEach(async() => {
 test('GET /', async() => {
     const expectedResponseText = "Node Express API Server App";
     const apiRequest = await request.newContext();
-
+    console.log(`${BASE_API_URL}`)
     const response = await  apiRequest.get(`${BASE_API_URL}/`)
 
     const statusCode = response.status()
@@ -36,12 +37,12 @@ test('GET /', async() => {
 
 // Variation 2: Test for GET request to root with external test data and utility functions
 test('GET / with utils', async () => {
-    const response = await apiRequest.get(`${testData.BASE_API_URL}/`);
+    const response = await apiRequest.get(`${BASE_API_URL}/`);
 
     // Assert response status
     const statusCode = utils.getResponseStatus(response);
 
-    await expect(statusCode).toBe(testData.expectedStatusCodes._200);
+    await expect(statusCode).toBe(apiTestData.expectedStatusCodes._200);
 
     const contentTypeHeaderValue = utils.getContentTypeHeaderValue(response);
     const contentLengthHeaderValue = utils.getContentLengthHeaderValue(response);
@@ -49,9 +50,9 @@ test('GET / with utils', async () => {
 
     // Assert the overall response
     await expect(response).toBeOK();
-    await expect(responseText).toEqual(testData.expectedTexts.successfulGetApiHome);
-    await expect(contentTypeHeaderValue).toBe(testData.expectedHeaders.contentTypeValue.textHtml);
-    await expect(contentLengthHeaderValue).toEqual(testData.expectedHeaders.contentLengthValue.successfulGetApiHomeLength);
+    await expect(responseText).toEqual(apiTestData.expectedTexts.successfulGetApiHome);
+    await expect(contentTypeHeaderValue).toBe(apiTestData.expectedHeaders.contentTypeValue.textHtml);
+    await expect(contentLengthHeaderValue).toEqual(apiTestData.expectedHeaders.contentLengthValue.successfulGetApiHomeLength);
 })
 
 // Variation 1: Test GET request for empty DB message with inline test data
@@ -84,7 +85,6 @@ test('GET /users/ empty DB message', async() => {
         .headersArray()
         .find((header) => header.name === 'Content-Length')
         .value;
-    const responseText = await response.text();
 
     // Assert headers and response text
     await expect(contentTypeHeaderValue).toBe(expectedContentTypeValue);
@@ -98,12 +98,12 @@ test('GET /users/ empty DB message with utils', async () => {
     // Precondition: Clear the users database with utilities function
     await preconditions.setPrecondition_DeleteUsers(apiRequest);
 
-    const response = await apiRequest.get(`${testData.USERS_ENDPOINT}/`);
+    const response = await apiRequest.get(`${testData.USERS_END_POINT}/`);
 
     const statusCode = utils.getResponseStatus(response);
 
     // Assert precondition response status and content
-    await expect(statusCode).toBe(testData.expectedStatusCodes._200);
+    await expect(statusCode).toBe(apiTestData.expectedStatusCodes._200);
 
     //headers
     const contentTypeHeaderValue = utils.getContentTypeHeaderValue(response);
@@ -111,16 +111,16 @@ test('GET /users/ empty DB message with utils', async () => {
     const responseText = await utils.getResponseText(response);
 
     // Assert headers and response text
-    await expect(contentTypeHeaderValue).toBe(testData.expectedHeaders.contentTypeValue.textHtml);
-    await expect(contentLengthHeaderValue).toBe(testData.expectedHeaders.contentLengthValue.successfulGetApiUsersHomeEmptyDb);
-    await expect(responseText).toBe(testData.expectedTexts.successfulGetUsersHomeEmptyDb);
+    await expect(contentTypeHeaderValue).toBe(apiTestData.expectedHeaders.contentTypeValue.textHtml);
+    await expect(contentLengthHeaderValue).toBe(apiTestData.expectedHeaders.contentLengthValue.successfulGetApiUsersHomeEmptyDb);
+    await expect(responseText).toBe(apiTestData.expectedTexts.successfulGetUsersHomeEmptyDb);
 })
 
 // Test for creating a user via POST request
 test('Create users', async () => {
     const apiRequest = await request.newContext();
     const response = await apiRequest.post(`${BASE_API_URL}/users`,{
-        data: testData.userFirst
+        data: apiTestData.userFirst
     })
 
     // Assert response status and message
@@ -139,7 +139,7 @@ test("Get /users/ response users' data", async() => {
 
     await expect(
         await apiRequest.post(`${BASE_API_URL}/users`,{
-            data: testData.userFirst
+            data: apiTestData.userFirst
         })
     ).toBeOK();
 
@@ -154,9 +154,9 @@ test("Get /users/ response users' data", async() => {
 
     // Assert response status and user data
     await expect(response.status()).toBe(200);
-    await expect(currentFirstName).toEqual(testData.userFirst.firstName);
-    await expect(currentLastName).toEqual(testData.userFirst.lastName);
-    await expect(currentAge).toEqual(testData.userFirst.age);
+    await expect(currentFirstName).toEqual(apiTestData.userFirst.firstName);
+    await expect(currentLastName).toEqual(apiTestData.userFirst.lastName);
+    await expect(currentAge).toEqual(apiTestData.userFirst.age);
 })
 
 // Variation 2: test for GET request to retrieve user data with external precondition
@@ -166,24 +166,25 @@ test ('GET /users/ response testData', async () => {
     await preconditions.setPrecondition_DeleteUsers_CreateUser(apiRequest);
 
     // Act: Send a GET request to fetch users
-    const response = await apiRequest.get(`${testData.USERS_ENDPOINT}/`);
+    const response = await apiRequest.get(`${testData.USERS_END_POINT}/`);
     const statusCode = response.status();
 
     // Assert response status and validate response body
-    await expect(statusCode).toBe(testData.expectedStatusCodes._200);
+    await expect(statusCode).toBe(apiTestData.expectedStatusCodes._200);
 
     const contentTypeHeaderValue = utils.getContentTypeHeaderValue(response);
     const responseBody = await utils.getResponseBody(response);
     const isArray = await Array.isArray(responseBody);
 
-    await expect(contentTypeHeaderValue).toBe(testData.expectedHeaders.contentTypeValue.applicationJson);
+    await expect(contentTypeHeaderValue).toBe(apiTestData.expectedHeaders.contentTypeValue.applicationJson);
     await expect(isArray).toBeTruthy();
     await expect(isArray).toBe(true);
-    await expect(responseBody).toHaveLength(testData.expectedResponseObjectsCount._1);
-    await expect(responseBody[0].firstName).toBe(testData.userFirst.firstName);
-    await expect(responseBody[0].lastName).toBe(testData.userFirst.lastName);
-    await expect(responseBody[0].age).toBe(testData.userFirst.age);
-    await expect(responseBody[0].id.length).toBe(testData.expected.idLength);
+    await expect(responseBody).toHaveLength(apiTestData.expectedResponseObjectsCount._1);
+    await expect(responseBody[0].firstName).toBe(apiTestData.userFirst.firstName);
+    await expect(responseBody[0].lastName).toBe(apiTestData.userFirst.lastName);
+    await expect(responseBody[0].age).toBe(apiTestData.userFirst.age);
+    await expect(responseBody[0].id.length).toBe(apiTestData.expected.idLength);
+    console.log("test", await expect(responseBody[0].id.length).toBe(apiTestData.expected.idLength))
 })
 
 // Test for updating a user via PATCH request
@@ -198,7 +199,7 @@ test('PATCH /users/:id updates user by ID', async()  => {
 
     await expect(
         await apiRequest.post(`${BASE_API_URL}/users`,{
-            data: testData.userFirst
+            data: apiTestData.userFirst
         })
     ).toBeOK();
 
@@ -208,7 +209,7 @@ test('PATCH /users/:id updates user by ID', async()  => {
     const userId = responseJson[0]?.id;
 
     const patchResponse = await apiRequest.patch(`${BASE_API_URL}/users/${userId}`,{
-        data: testData.userSecond
+        data: apiTestData.userSecond
     })
 
     // Assert response status and message
@@ -227,13 +228,13 @@ test('GET /users/:id - retrieves user data by ID', async() => {
 
     await expect(
         await apiRequest.post(`${BASE_API_URL}/users`,{
-            data: testData.userFirst
+            data: apiTestData.userFirst
         })
     ).toBeOK();
 
     await expect(
         await apiRequest.post(`${BASE_API_URL}/users`, {
-            data: testData.userSecond
+            data: apiTestData.userSecond
         })
     ).toBeOK();
 
@@ -256,9 +257,9 @@ test('GET /users/:id - retrieves user data by ID', async() => {
     const currentUserId = currentUserResponseJson.id;
 
     await expect(response.status()).toBe(200);
-    await expect(currentFirstName).toEqual(testData.userFirst.firstName);
-    await expect(currentLastName).toEqual(testData.userFirst.lastName);
-    await expect(currentAge).toEqual(testData.userFirst.age);
+    await expect(currentFirstName).toEqual(apiTestData.userFirst.firstName);
+    await expect(currentLastName).toEqual(apiTestData.userFirst.lastName);
+    await expect(currentAge).toEqual(apiTestData.userFirst.age);
     await expect(currentUserId).toEqual(userId);
 })
 
@@ -273,7 +274,7 @@ test('Delete /users/:id - deletes user by ID', async() => {
     // to create first user
     await expect(
         await apiRequest.post(`${BASE_API_URL}/users`,{
-            data: testData.userFirst
+            data: apiTestData.userFirst
         })
     ).toBeOK();
 
