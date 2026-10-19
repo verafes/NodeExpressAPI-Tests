@@ -240,7 +240,10 @@ test('GET /users/:id - retrieves user data by ID', async() => {
 
     // Act: Retrieve the list of users and get the ID of the first user
     const newUserResponse = await apiRequest.get(`${BASE_API_URL}/users`);
+    expect(newUserResponse.headers()['content-type']).toContain('application/json');
     const responseJson = await newUserResponse.json();
+    expect(Array.isArray(responseJson)).toBe(true);
+    expect(responseJson.length).toBeGreaterThanOrEqual(1);
     const userId = responseJson[0]?.id;
     console.log("users:", responseJson);
 

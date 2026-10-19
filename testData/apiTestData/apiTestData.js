@@ -1,4 +1,4 @@
-export const BASE_API_URL = 'http://localhost:5000/api';
+export const BASE_API_URL = process.env.BASE_API_URL;
 export const USERS_ENDPOINT = `${BASE_API_URL}/users`;
 
 export const expectedTexts = {

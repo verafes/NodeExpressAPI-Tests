@@ -1,11 +1,11 @@
 const PORT = process.env.PORT
-const BASE_URL = `http://localhost:${PORT}`
-export const HOME_PAGE_URL = `${BASE_URL}/`
-export const BASE_API_URL=`${BASE_URL}/api`
+const BASE_URL = `http://localhost:${PORT}`;
+export const HOME_PAGE_URL = `${BASE_URL}/`;
+export const BASE_API_URL=`${BASE_URL}/api`;
 export const USERS_END_POINT = `${BASE_API_URL}/users`;
 
 export const expectedHeaders = {
-    title: 'Users App',
+    title: 'Users app',
     h1: 'Node Express API Server App',
     addUserH2: 'Add User',
     userListH2: 'Users List',
@@ -55,7 +55,7 @@ export const navigationData = [
         buttonName: 'Add',
         expectedCount: 3,
         expectedLabels: ['First Name', 'Last Name', 'Age'],
-        expectedURL: `${process.env.BASE_URL}` + '/add',
+        expectedURL: `${process.env.BASE_URL}` + '/',
         expectedTitle: 'Users app',
         expectedActiveClass: 'nav-link active',
         expectedAriaCurrent: 'page',

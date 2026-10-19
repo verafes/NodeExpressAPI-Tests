@@ -8,7 +8,7 @@ test('Title and URL as expected - Smoke test', async ({ page }) => {
     await page.goto(`${testData.HOME_PAGE_URL}`);
 
     // Verify URL and title
-    await expect(page).toHaveURL(`${testData.HOME_PAGE_URL}/`);
+    await expect(page).toHaveURL(`${testData.HOME_PAGE_URL}`);
     await expect(page).toHaveTitle(testData.expectedHeaders.title);
 });
 
