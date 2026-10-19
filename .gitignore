@@ -1,14 +1,44 @@
 node_modules/
+dist
+dist-ssr
+*.local
+
+# Playwright & test artifacts
 /test-results/
+results.json
 /playwright-report/
 /blob-report/
+/allure-results/
+/allure-report/
+/allure-history/
 /playwright/.cache/
+
+# IDE & system files
 .idea/
 .idea/*
 .DS_Store
 .vs/
+.vscode/*
+!.vscode/extensions.json
 
 # Logs
 logs
 *.log
 npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables
+.env
+
+# agents
+.github/chatmodes/*planner.chatmode.md
+.github/chatmodes/*generator.chatmode.md
+.github/chatmodes/*healer.chatmode.md
+
+# VS Code MCP config
+.vscode/mcp.json
+
+# Agents documentation
+AGENTS.md
+docs/agents/
