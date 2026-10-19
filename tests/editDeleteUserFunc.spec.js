@@ -35,7 +35,7 @@ User should be deleted from table.
 
 test.describe('User should be able to edit and delete user.', async () => {
     let apiRequest;
-
+    let randomUser;
     test.beforeEach('Delete DB, Create DB via API call, Go to Home page, Select random user', async ({page}) => {
         //1. Delete DB and create new DB via api requests
         apiRequest = await request.newContext();
@@ -45,21 +45,21 @@ test.describe('User should be able to edit and delete user.', async () => {
         //2. User is on Home page
         await page.goto(HOME_PAGE_URL);
 
-        const users = page.locator('tbody > tr');
-        const usersAmount = await users.count();
+        const usersLocator = page.locator('tbody > tr');
+        const usersAmount = await usersLocator.count();
 
         //3.Select random user
         await expect(usersAmount).toBeGreaterThanOrEqual(1);
 
         const randomUserIndex = Math.floor(Math.random() * usersAmount);
-        const randomUser = await users.nth(randomUserIndex);
+        randomUser = await usersLocator.nth(randomUserIndex);
 
         console.log(randomUser);
     })
 
     test(`TC-EditUser-1 Randomly selected user should be editable.`,
         async ({page}) => {
-            console.log("Test");
+            console.log("TC-EditUser-1");
             const randomUserEditIcon = randomUser.locator('td>i>a.bi-pen');
             randomUserEditIcon.click();
 
@@ -78,13 +78,11 @@ test.describe('User should be able to edit and delete user.', async () => {
                 if(await inputs[i].getAttribute('id') === 'lastName') {
                     userLastNameIndex = i;
                 }
-
             }
 
             let idIndex;
             for (let i = 0; i < user.length; i++) {
                 if (user[i].includes('-')) {
-
                     idIndex = i;
                 }
             }
@@ -170,14 +168,31 @@ test.describe('User should be able to edit and delete user.', async () => {
             await expect(editedUser[editedUserFirstNameIndex]).toEqual(firstName);
             await expect(user[userLastNameIndex]).not.toBe(editedUser[editedUserLastNameIndex]);
             await expect(editedUser[editedUserLastNameIndex]).toEqual(lastName);
-
         });
 
     test(`TC-DeleteUser-1: Randomly selected user should be deletable.`,
         async ({page}) => {
-            console.log("Test");
+            console.log("TC-DeleteUser-1");
 
+            const listUsers = await page.locator('tbody>tr').all()
+            const countUsers = listUsers.length
 
+            const deleteIcon = await randomUser.locator('td>i>a.bi-trash');
+            await deleteIcon.click();
+            await page.waitForLoadState('networkidle');
+            const inputs = await page.locator('#form-delete input').all();
+
+            for(let i = 0; i <= 1; i++) {
+                await expect(await inputs[i].isEditable()).toBe(false);
+            }
+
+            const deleteButton = await page.getByRole('button', {name: 'Delete'});
+            await deleteButton.click();
+            await page.waitForLoadState('networkidle');
+            const actualListUsers = await page.locator('tbody>tr').all();
+            const actualCountUsers = actualListUsers.length;
+
+            await expect(actualCountUsers).toEqual(countUsers - 1);
         });
 
 
